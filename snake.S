@@ -89,6 +89,10 @@ game_loop:
     CMP Fruit_X
     BEQ head_matches_fruit_x
 done_checking:
+    LDX Fruit_X
+    LDY Fruit_Y
+    LDA Fruit_Color
+    JSR draw_pixel
     LDA Input
     CMP #1
     BEQ move_up
@@ -268,7 +272,10 @@ add_part:
     RTS
 
 game_over:
-    JMP game_over
+    LDA Input
+    CMP #9
+    BNE game_over
+    JMP start
 
 ; function to draw pixel in X and Y location stored in X and Y registers, with color stored in Accumulator
 draw_pixel:
@@ -336,12 +343,15 @@ noEor:
     RTS 
 
 nmi:
+    PHA
     LDA Game_Started
     CMP #0
     BEQ increase_seed
+    PLA
     RTI
 increase_seed:
     INC Seed
+    PLA
     RTI
 
 .goto $FFFA
